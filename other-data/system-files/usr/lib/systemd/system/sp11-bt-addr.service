@@ -1,0 +1,11 @@
+[Unit]
+Description=Set Bluetooth MAC from UEFI variable
+Before=bluetooth.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/sp11-bt-addr.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

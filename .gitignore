@@ -1,0 +1,7 @@
+# 
+# .gitignore
+# 
+
+/.saved-images
+/convert-txt-to-md.sh
+

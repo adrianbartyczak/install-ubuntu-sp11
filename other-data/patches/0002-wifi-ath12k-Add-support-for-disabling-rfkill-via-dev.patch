@@ -1,0 +1,30 @@
+From e0c52309e8380b33239b16a85fbedb5da7d12675 Mon Sep 17 00:00:00 2001
+From: dwhinham <dale@dalewh.inham.org.uk>
+Date: Tue, 28 Oct 2025 19:05:25 +0000
+Subject: [PATCH 2/4] wifi: ath12k: Always disable rfkill for Surface Pro 11
+
+On UEFI ARM64 systems (Surface Pro 11), the firmware provides the
+devicetree and we cannot add a "disable-rfkill" property to it.
+Unconditionally skip rfkill configuration so WiFi works out of the box.
+
+Original patch checked devicetree property; this version just returns 0.
+---
+ drivers/net/wireless/ath/ath12k/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
+index 5d494c5cdc0da3..954028495ea6a1 100644
+--- a/drivers/net/wireless/ath/ath12k/core.c
++++ b/drivers/net/wireless/ath/ath12k/core.c
+@@ -78,6 +78,9 @@ static int ath12k_core_rfkill_config(struct ath12k_base *ab)
+ 	if (ath12k_acpi_get_disable_rfkill(ab))
+ 		return 0;
+
++	/* Surface Pro 11: rfkill is hard-blocked by firmware, skip it */
++	return 0;
++
+ 	for (i = 0; i < ab->num_radios; i++) {
+ 		ar = ab->pdevs[i].ar;
+
+--
+2.48.1
