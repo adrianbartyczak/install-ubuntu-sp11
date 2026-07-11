@@ -104,10 +104,9 @@ this, skip to step 8.
 
 ## 4. Install Ubuntu
 
-For this process, you want to get a fan (large or small) and point it at the back of your Surface Pro, because during
-the last step of the Ubuntu installer, Ubuntu uses the FULL power of your CPU, causing it to get very hot. Additionally,
-this step sometimes DOESN'T end on it's own, so we have to manually end it  
-(see steps below).
+For this process, you may want to get a fan (large or small) and point it at the back of your Surface Pro, because
+during the last step of the Ubuntu installer, your CPU WILL get VERY hot. Additionally, that step sometimes DOESN'T end
+for at least 15 minutes because it's building some unnecessary software, so we manually end it after about 5 minutes.
 
 1. Open up the terminal.
 
@@ -121,7 +120,8 @@ this step sometimes DOESN'T end on it's own, so we have to manually end it
 
 5. Keep that command there and minimize the terminal.
 
-6. Start the installer.
+6. Start the installer  
+   (look at steps 7 - 10 as you go through the installer).
 
 7. On the step that asks which internet connection to use, click "Do not connect to internet". This is important so
    it install as few packages as possible during the installation process, which maxes out the CPU and causes it
@@ -166,18 +166,18 @@ Surface Pro 11.
 
 ### Fixing Wi-Fi and Bluetooth
 
-1. Clone the "install-ubuntu-sp11" repository if you haven't already:
+1. Clone this repository if you haven't already:
    ```bash
    git clone https://github.com/adrianbartyczak/install-ubuntu-sp11.git
    ```
 
 2. Get into sudo mode by running: > sudo -i
 
-3. Navigate to the GitHub repository.
+3. Navigate to the scripts directory of this GitHub repository.
 
-4. Run the script "fix-wifi-firmware.sh".
+4. Run script "fix-wifi-firmware.sh".
 
-5. Run the script "fix-bluetooth-firmware.sh".
+5. Run script "fix-bluetooth-firmware.sh".
 
 6. Reboot.
 
@@ -202,7 +202,7 @@ You can find his repository here: https://github.com/kyjus25/linux-surface-pro-1
 ### Lower CPU/GPU heat (and extend battery life)
 
 Ubuntu comes with a package that dynamically adjust system power called "power-profiles-daemon". Installing TLP reduces
-CPU and GPU heat a noticeable amount. To install TLP, run the following:
+CPU heat a noticeable amount. To install TLP, run the following:
 ```bash
 sudo apt install tlp tlp-rdw
 sudo systemctl disable --now power-profiles-daemon
@@ -230,8 +230,7 @@ sudo apt install linux-tools-common linux-tools-$(uname -r)
 sudo cpupower frequency-set -g <governor>
 ```
 
-From tests, the "powersave" governor significantly reduced CPU heat after about 15 minutes, however, this may have been
-caused by something else. It's hard to tell.
+From tests, the "powersave" governor significantly reduced CPU heat after about 15 minutes.
 
 Finally, XFCE reduces CPU heat a decent amount in idle mode compared to GNOME from my tests.
 If you want to install it, run the following:
@@ -252,20 +251,12 @@ desktop environment.
 
 ### Windows Hyper-V with Linux vs Ubuntu Snapdragon Concept image
 
-Windows Hyper-V with Linux still has about twice as better battery life because of the lack of firmware in the Ubuntu
-Snapdragon concept image for the Surface Pro 11 (please see my battery test comparisons here):
+Windows Hyper-V with Linux still has about twice as better battery life because of the lack of firmware for the
+Surface Pro 11 in the Ubuntu Snapdragon concept image (please see my battery test comparisons here):
 - <https://github.com/adrianbartyczak/install-ubuntu-sp11/blob/main/other-data/documents/battery-test-comparisons.txt>
 
 Other than that, Wi-Fi, bluetooth, USB and backlight control and working on Ubuntu Snapdragon concept image. Audio,
 touchscreen and screen resolution control (stuck at 2880x1920) are not working.
-
-### Windows Hyper-V custom resolution
-
-If you're having trouble setting a custom resolution in a Linux virtual machine running in Windows Hyper-V, run the
-following command in PowerShell:
-```bash
-set-vmvideo -vmname <virtual-machine-name> -horizontalresolution:xxxx -verticalresolution:xxxx -resolutiontype single
-```
 
 ### How to fix UEFI firmware in case it got broken by an image
 
@@ -298,6 +289,90 @@ but I went through all of these steps):
 10. Run the command "bootrec /fixmbr".
 11. Reboot back into the Surface Pro System Recovery image USB drive.
 12. Like in step 3, click the "Restore from drive" option and restore the drive again.
+
+## Linux virtual machine on Windows Hyper-V set up tutorial
+
+Surface Pro 11 purchase note: If you're planning on buying a Surface Pro 11 just to use Windows Hyper-V with Linux, you
+                              should 100% get the 32GB version as Windows takes up about 5GB of memory and Hyper-V
+                              itself takes up about another 5GB of memory.
+
+### Install Linux (this example uses Debian)
+
+1. Download the net install ISO from Debian's home page  
+   (Note: The complete ISO won't work in Windows Hyper-V).
+
+2. Open Windows Hyper-V and click New --> "Virtual Machine...".
+
+3. During the install wizard, select the "Install OS later" option.
+
+4. After finishing setting up the VM, right click on the VM and click on "Settings".
+
+5. Go to "SCSI Controller" and add a "DVD Drive" that points to the Debian net install ISO image.
+
+6. Go to the "Firmware" section and move "DVD Drive" to the top.
+
+7. Start the VM and install Debian.
+
+### Set a custom resolution on the VM
+
+1. Run the following command in PowerShell:
+   ```bash
+   set-vmvideo -vmname <virtual_machine_name> -horizontalresolution:xxxx -verticalresolution:xxxx -resolutiontype single
+   ```
+
+### Enable port-forwarding for VNC in the Debian VM
+
+Note: Microsoft's Default Switch cannot be modified in PowerShell, so we must create a new custom NAT switch with a
+      custom IP address with a forwarded port.
+
+1. Open PowerShell and do the following:
+   - a. Create a Custom NAT switch:
+   ```bash
+   New-VMSwitch -SwitchName "MyDebianNatSwitch" -SwitchType Internal
+   ```
+
+   - b. Get the new NAT switch's ifIndex and other information:
+   ```bash
+   Get-NetAdapter -Name "*MyDebianNatSwitch*"
+   ```
+
+   - c. Assign a gateway IP to the switch:
+   ```bash
+   New-NetIPAddress -IPAddress 192.168.100.1 -PrefixLength 24 -InterfaceIndex <ifIndex_from_previous_command>
+   ```
+
+   - d. Enable the NAT network routing instance from the VM NAT switch:
+   ```bash
+   New-NetNat -Name "MyDebianNatSwitch" -InternalIPInterfaceAddressPrefix 192.168.100.0/24
+   ```
+
+2. Open up the Settings for the Debian virutal machine.
+
+3. Select "Network Adapter" from the left and select "MyDebianNatSwitch" and click Ok.
+
+4. Start your Debian VM and create a static IP inside your new network range using the terminal. This is necessary
+   because the DHCP server is gone after we changed from the "Default Switch". Open up the terminal and run the
+   following:
+   ```bash
+   sudo ip addr add 192.168.100.20/24 dev eth0
+   sudo ip route add default via 192.168.100.1
+   ```
+
+5. Finally, return to PowerShell to forward your VNC port on IP address "192.168.100.20":
+   ```bash
+   Add-NetNatStaticMapping -NatName "MyDebianNatSwitch" -Protocol TCP -ExternalIPAddress "0.0.0.0" -ExternalPort <VNC_port> -InternalIPAddress "192.168.100.20" -InternalPort <VNC_port>
+   ```
+
+6. Connect to your VNC server on `<Windows_LAN_IP_address>`:`<VNC_port>`.
+   To get your Windows LAN IP address, run "ipconfig" in PowerShell.
+
+### Optimize Windows for better performance (optional)
+
+1. Open the Run application and run "sysdm.cpl".
+
+2. Go to "Advanced" --> "Settings"
+
+3. Click "Optimize Windows for better performance".
 
 ## Other Ubuntu ARM images I've tried
 
