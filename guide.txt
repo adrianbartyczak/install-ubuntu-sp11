@@ -233,7 +233,7 @@ Windows Hyper-V with Linux still has about twice as better battery life because 
 Surface Pro 11 in the Ubuntu Snapdragon concept image (please see my battery test comparisons here):
 https://github.com/adrianbartyczak/install-ubuntu-sp11/blob/main/other-data/documents/battery-test-comparisons.txt
 
-Other than that, Wi-Fi, bluetooth, USB and backlight control and working on Ubuntu Snapdragon concept image. Audio,
+Other than that, Wi-Fi, bluetooth, USB and backlight control and working on the Ubuntu Snapdragon concept image. Audio,
 touchscreen and screen resolution control (stuck at 2880x1920) are not working.
 
 -------- How to fix UEFI firmware in case it got broken by an image --------
@@ -296,8 +296,15 @@ Surface Pro 11 purchase note: If you're planning on buying a Surface Pro 11 just
 
 -------- Enable port-forwarding for VNC in the Debian VM --------
 
-Note: Microsoft's Default Switch cannot be modified in PowerShell, so we must create a new custom NAT switch with a
-      custom IP address with a forwarded port.
+Notes:
+- This requires creating a VMSwitch in PowerShell, which seems to break the internet connection in the VM, and there
+  doesn't seem to be a way to fix it. Additionally, doing this kind of breaks the network configuration within your
+  Debian VM, preventing your from getting internet ever again, and requiring you to reinstall the VM.
+- The best alternative to this is connecting to Windows via VNC and then use your VM from that VNC connection. If VNC
+  does not work on your ARM-based PC (as it didn't for me), then you can use Sunshine with Moonlight.
+
+(If anyone knows how to get internet to work inside the VM after doing these steps, please let me know by submitting an
+issue.)
 
 --- 1. Open PowerShell and do the following:
 a. Create a Custom NAT switch:
@@ -305,25 +312,56 @@ a. Create a Custom NAT switch:
 b. Get the new NAT switch's ifIndex and other information:
 > Get-NetAdapter -Name "*MyDebianNatSwitch*"
 c. Assign a gateway IP to the switch:
-> New-NetIPAddress -IPAddress 192.168.100.1 -PrefixLength 24 -InterfaceIndex <ifIndex_from_previous_command>
+> New-NetIPAddress -IPAddress 172.30.50.1 -PrefixLength 24 -InterfaceIndex <ifIndex_from_previous_command>
 d. Enable the NAT network routing instance from the VM NAT switch:
-> New-NetNat -Name "MyDebianNatSwitch" -InternalIPInterfaceAddressPrefix 192.168.100.0/24
+> New-NetNat -Name "MyDebianNatSwitch" -InternalIPInterfaceAddressPrefix 172.30.50.0/24
+d. Connect the VMSwitch to your VM instance: (optionally, you can select it in your VM's Settings under
+   "Network Adapter")
+> Connect-VMNetworkAdapter -VMName "<your_vm_name>" -SwitchName "MyDebianNatSwitch"
 
---- 2. Open up the Settings for the Debian virutal machine.
+--- 2. (Skip if ran Connect-VMNetworkAdapter) Open up the Settings for the Debian virutal machine.
 
---- 3. Select "Network Adapter" from the left and select "MyDebianNatSwitch" and click Ok.
+--- 3. (Skip if ran Connect-VMNetworkAdapter) Select "Network Adapter" from the left and select "MyDebianNatSwitch" and click Ok.
 
 --- 4. Start your Debian VM and create a static IP inside your new network range using the terminal. This is necessary
        because the DHCP server is gone after we changed from the "Default Switch". Open up the terminal and run the
        following:
-> sudo ip addr add 192.168.100.20/24 dev eth0
-> sudo ip route add default via 192.168.100.1
+> sudo ip addr add 172.30.50.120/24 dev eth0
+> sudo ip route add default via 172.30.50.1
+
+       To make it permanent, add the following to /etc/network/interfaces:
+auto eth0
+iface eth0 inet static
+    address 172.30.50.120/24
+    gateway 172.30.50.1
 
 --- 5. Finally, return to PowerShell to forward your VNC port on IP address "192.168.100.20":
 > Add-NetNatStaticMapping -NatName "MyDebianNatSwitch" -Protocol TCP -ExternalIPAddress "0.0.0.0" -ExternalPort <VNC_port> -InternalIPAddress "192.168.100.20" -InternalPort <VNC_port>
 
 --- 6. Connect to your VNC server on <Windows_LAN_IP_address>:<VNC_port>.
        To get your Windows LAN IP address, run "ipconfig" in PowerShell.
+
+-------- Remove a VM Switch --------
+
+        To remove a VM Switch, run the following:
+> Remove-NetNat -Name "<switch_name>" -Confirm:$false
+> Remove-VMSwitch -Name "<switch_name>" -Force
+
+-------- Set a max CPU percentage on your Windows machine (to prevent any possibility of overheating; optional) --------
+
+--- 1. Open Control Panel.
+
+--- 2. Go to System and Security > Power Options.
+
+--- 3. Click Change plan settings next to your active power plan.
+
+--- 4. Click Change advanced power settings.
+
+--- 5. Click the "+" on Processor power management.
+
+--- 6. Click the "+" on Maximum processor state.
+
+--- 7. Set the percentage for both Battery and Plugged in.
 
 -------- Optimize Windows for better performance (optional) --------
 
