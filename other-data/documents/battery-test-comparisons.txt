@@ -6,8 +6,6 @@
 #     Battery test comparisons between different operating systems on the Surface Pro 11.
 #     Specs: X1E, OLED screen, Wifi (no 5G)
 # 
-#     Tests completed on 07/07/2026.
-# 
 
 ================================================================
     Test 1: Playing YouTube for 1 hour and 20 minutes
@@ -15,6 +13,8 @@
 
 Test:
 Play Google Keynote YouTube video at 720p in default (non-theatre) mode in Firefox. Firefox is fullscreen.
+
+Completion date: 07/07/26
 
 Battery start percentage:
 70% (starting drain from 75%)
@@ -62,20 +62,22 @@ Most likely will be the same as Ubuntu with XFCE when the "schedutil" governor i
 Test:
 Idle for 4 hours with screen on and brightness set to 40%
 
+Completion date: (In progress)
+
 Harware configurations:
     WiFi: Off
     (The rest same as Test 1)
 
 USB attachments:
-    1 USB hub that has 1 USB flash drive connected
+    (None)
 
 Linux-specific configurations:
     Using the TLP power manager instead of "power-profiles-daemon"
 
 --------- Results ----------------------------------------------
 
-Windows Hyper-V running Debian with XFCE: 62% to 42% (20% drop)
+Windows Hyper-V running Debian with XFCE: 55% to 39% (16% drop)
 
-Ubuntu with XFCE and "schedutil" CPU governor: 65% to 10% (55% drop)
+Ubuntu with XFCE and "schedutil" CPU governor: 61% to 15% (51% drop)
 
-Ubuntu with XFCE and "powersaving" CPU governor: 63% to 20% (43% drop)
+Ubuntu with XFCE and "powersaving" CPU governor: (TBD)
