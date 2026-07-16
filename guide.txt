@@ -292,7 +292,19 @@ Surface Pro 11 purchase note: If you're planning on buying a Surface Pro 11 just
 -------- Set a custom resolution on the VM --------
 
 --- 1. Run the following command in PowerShell:
-> set-vmvideo -vmname <virtual_machine_name> -horizontalresolution:xxxx -verticalresolution:xxxx -resolutiontype single
+> set-vmvideo -vmname <virtual_machine_name> -horizontalresolution:<width> -verticalresolution:<height> -resolutiontype single
+
+--- 2. Start or restart your virtual machine.
+
+--- 3. In your virtual machine, get your display name by running the following command:
+> xrandr 
+(The display name should be the first column text on the second line [e.g. Virtual-1])
+
+--- 4. Set your custom resolution by running the following commands:
+> cvt <width> <height> <fps>
+> xrandr --newmode <modeline_string_(all_text_after_"Modeline"_from_cvt_command)>
+> xrandr --addmode <display_name> "<width>x<height>_<fps>.00"
+> xrandr --output <display_name> --mode "<width>x<height>_<fps>.00"
 
 -------- Enable port-forwarding for VNC in the Debian VM --------
 
@@ -343,7 +355,7 @@ iface eth0 inet static
 
 -------- Remove a VM Switch --------
 
-        To remove a VM Switch, run the following:
+To remove a VM Switch, run the following:
 > Remove-NetNat -Name "<switch_name>" -Confirm:$false
 > Remove-VMSwitch -Name "<switch_name>" -Force
 
