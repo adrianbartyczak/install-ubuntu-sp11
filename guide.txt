@@ -106,11 +106,11 @@ for at least 15 minutes because it's building some unnecessary software, so we m
 
 --- 1. Open up the terminal.
 
---- 2. Edit the following file with vim: > vim /etc/apt/apt.conf.d/20auto-upgrades
+--- 2. Edit the following file with nano or vim: > sudo nano /etc/apt/apt.conf.d/20auto-upgrades
 
 --- 3. Change the values of the following variables to "0":
-           APT::Periodic::Update-Package-Lists "1";
-           APT::Periodic::Unattended-Upgrade "1";
+- APT::Periodic::Update-Package-Lists "1";
+- APT::Periodic::Unattended-Upgrade "1";
 
 --- 4. In the same terminal, type in (but don't run) the following: > sudo killall -9 ubuntu_bootstrap
 
@@ -167,17 +167,26 @@ Surface Pro 11.
 
 --- 3. Navigate to the scripts directory of this GitHub repository.
 
---- 4. Run script "fix-wifi-firmware.sh".
+--- 4. Run script "fix-bluetooth-firmware.sh".
 
---- 5. Run script "fix-bluetooth-firmware.sh".
+--- 5. Run script "fix-wifi-firmware.sh".
 
 --- 6. Reboot.
 
 --- 7. Check if the Wi-Fi toggle is working. If not, please run "debug-wifi-firmware.sh". It will tell you what
        modules and firmware is missing.
 
+       It may also be enough just to remove the Wi-Fi Udev rule in /etc/udev/rules.d/99-fix_mac_addresses.rules (which
+       contains both a Wi-Fi and bluetooth Udev rule) and then reboot.
+
 --- 8. Check if Bluetooth is working. If not, run "fix-bluetooth-firmware-method-2.sh", and
        reboot.
+
+       This method uses the btmgmt command and EFI variables to assign the bluetooth MAC address at boot.
+       The first fix-bluetooth-firmware-method.sh script uses udev rules and is based on the following tutorial:
+       https://wiki.debian.org/InstallingDebianOn/Thinkpad/X13s#Wi-Fi_and_Bluetooth
+
+--- Note
 
        If "fix-bluetooth-firmware-method-1.sh" already fixed bluetooth and you ran "fix-bluetooth-firmware-method-2.sh"
        anyways, then Bluetooth might not work again simply because the service is running. Run the following commands to
@@ -186,7 +195,7 @@ Surface Pro 11.
            > sudo pkill -9 -f 'btmgmt --index 0'
            > sudo systemctl start bluetooth
 
-Thanks to @kyjus25 for finding the solution to fixing Wi-Fi and Bluetooth on the Surface Pro 11.
+Thanks to @kyjus25 for finding the solution to fixing Wi-Fi and Bluetooth (via EFI assignment method) on the Surface Pro 11.
 You can find his repository here: https://github.com/kyjus25/linux-surface-pro-11-ky
 
 -------- Lower CPU/GPU heat (and extend battery life) --------
