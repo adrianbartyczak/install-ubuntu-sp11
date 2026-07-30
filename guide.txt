@@ -240,7 +240,7 @@ desktop environment.
 
 Windows Hyper-V with Linux still has about twice as better battery life because of the lack of firmware for the
 Surface Pro 11 in the Ubuntu Snapdragon concept image (please see my battery test comparisons here):
-https://github.com/adrianbartyczak/install-ubuntu-sp11/blob/main/other-data/documents/battery-test-comparisons.txt
+https://github.com/adrianbartyczak/install-ubuntu-sp11/blob/main/other-data/documents/battery-comparison-tests.txt
 
 Other than that, Wi-Fi, bluetooth, USB and backlight control and working on the Ubuntu Snapdragon concept image. Audio,
 touchscreen and screen resolution control (stuck at 2880x1920) are not working.

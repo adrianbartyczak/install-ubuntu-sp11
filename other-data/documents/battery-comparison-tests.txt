@@ -1,9 +1,9 @@
 # 
 # File:
-#     battery-test-comparisons.txt
+#     battery-comparison-tests.txt
 # 
 # Description:
-#     Battery test comparisons between different operating systems on the Surface Pro 11.
+#     Battery comparison tests between different operating systems on the Surface Pro 11.
 #     Specs: X1E, OLED screen, Wifi (no 5G)
 # 
 
@@ -62,7 +62,7 @@ Most likely will be the same as Ubuntu with XFCE when the "schedutil" governor i
 Test:
 Idle for 4 hours with screen on and brightness set to 40%
 
-Completion date: (In progress)
+Completion date: 07/22/26
 
 Harware configurations:
     WiFi: Off
@@ -80,4 +80,4 @@ Windows Hyper-V running Debian with XFCE: 55% to 39% (16% drop)
 
 Ubuntu with XFCE and "schedutil" CPU governor: 61% to 15% (51% drop)
 
-Ubuntu with XFCE and "powersaving" CPU governor: (TBD)
+Ubuntu with XFCE and "powersaving" CPU governor: 67% to 27% (40% drop)
