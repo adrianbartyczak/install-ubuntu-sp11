@@ -14,7 +14,7 @@ We will be installing the Ubuntu Snapdragon X Elite concept image from here:
 https://discourse.ubuntu.com/t/ubuntu-concept-snapdragon-x-elite/48800
 (Note: It still works on the Snapdragon X1P.)
 
-This offical page provides the "questing" image file, however, we need the "resolute" image file. When booting the
+This official page provides the "questing" image file, however, we need the "resolute" image file. When booting the
 "questing" image file (on the Surface Pro 11), we get the following error:
 "mount: mounting efivarfs on /sys/firmware/efi/efivars failed: Operation not supported".
 
@@ -41,9 +41,9 @@ this, skip to step 8.
        If you have multiple USB drives connected, you will get something like the following:
        /dev/sdb  /dev/sdb1  /dev/sdc  /dev/sdc1
 
-       In this case, you have to find the drive that you just partitioned. This can be done by running
-       "sudo fdisk /dev/sd[DRIVE_LETTER]" and then pressing "p" to verify the partitions. (You can also use
-       "df -Pm /dev/[DRIVE_LETTER]1" to check the size of the partition.)
+       In this case, you have to find the letter of the drive that you just connected if you don't know it. The easiest
+       way to do this is to unplug the USB drive, check which letters are currently present, re-plug the USB
+       drive, and once again, check which letters are present.
 
 --- 2. Create an EFI System partition using fdisk (NOTE: This WILL erase all data on the USB drive):  
 
@@ -80,7 +80,7 @@ this, skip to step 8.
        (Credits go to @geocausa [https://github.com/linux-surface/linux-surface/discussions/2128] for this solution.)
 > sudo rm /mnt/usb/EFI/boot/bootaa64.efi; sudo cp /mnt/usb/EFI/boot/grubaa64.efi /mnt/usb/EFI/boot/bootaa64.efi
 
---- 9. Unmount the ISO loop deivce and the USB device:
+--- 9. Unmount the ISO loop device and the USB device:
 > sudo umount /mnt/iso; sudo umount /mnt/usb
 
 ================================================================
@@ -136,7 +136,7 @@ for at least 15 minutes because it's building some unnecessary software, so we m
            - (Feel free to add any other partition you want.)
        Click Next.
 
---- 10. For the last step of the installer (clicking Contine on the Review step), you have two options:
+--- 10. For the last step of the installer (clicking Continue on the Review step), you have two options:
         Option 1. Let the installer fully finish (takes about 15 to 30 minutes). Option 2. Run the "sudo killall -9 ubuntu_bootstrap"
         command you typed in the other terminal after about 5 minutes. Option 2. has the risk of the installer not
         getting as far as it needs to, but it does prevent your CPU from being hot for too long. If option 2. causes
@@ -247,7 +247,7 @@ touchscreen and screen resolution control (stuck at 2880x1920) are not working.
 
 -------- How to fix UEFI firmware in case it got broken by an image --------
 
-Sometimes, a rouge image can mess up your UEFI firmware, preventing your computer from booting to a USB drive.
+Sometimes, a rogue image can mess up your UEFI firmware, preventing your computer from booting to a USB drive.
 This happened to me, and here are the steps I took to fix it (I'm not sure which part of this process actually fixed it,
 but I went through all of these steps):
 
@@ -262,7 +262,7 @@ but I went through all of these steps):
            f. Download the Surface Pro 11 Recovery ZIP file from Microsoft's website.
            g. Extract the contents of the Surface Pro 11 Recovery ZIP file to the root of the partition (the same location as the "EFI" and "sources" directories).
 2. Boot the recovery image USB drive.
-3. In the main menu, click the "Restore from drive"(or something similar) option and then select the "Keey my files" or "Erase whole disk" option.
+3. In the main menu, click the "Restore from drive"(or something similar) option and then select the "Keep my files" or "Erase whole disk" option.
 4. The operation will succeed or fail after 99% with a message like "There was a problem recovering the system".
    This will be fixed later on.
 5. Go to UEFI settings and toggle Secure Boot (enable or disable, just make it the opposite of what it was).
@@ -340,7 +340,7 @@ d. Connect the VMSwitch to your VM instance: (optionally, you can select it in y
    "Network Adapter")
 > Connect-VMNetworkAdapter -VMName "<your_vm_name>" -SwitchName "MyDebianNatSwitch"
 
---- 2. (Skip if ran Connect-VMNetworkAdapter) Open up the Settings for the Debian virutal machine.
+--- 2. (Skip if ran Connect-VMNetworkAdapter) Open up the Settings for the Debian virtual machine.
 
 --- 3. (Skip if ran Connect-VMNetworkAdapter) Select "Network Adapter" from the left and select "MyDebianNatSwitch" and click Ok.
 
