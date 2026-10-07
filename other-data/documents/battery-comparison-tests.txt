@@ -13,11 +13,9 @@
 
 Test:
 Play Google Keynote YouTube video at 720p in default (non-theatre) mode in Firefox. Firefox is fullscreen.
+Battery percentage starting from 70% (with drain starting from 75%).
 
 Completion date: 07/07/26
-
-Battery start percentage:
-70% (starting drain from 75%)
 
 Run time:
 1 hour and 20 minutes
@@ -60,7 +58,8 @@ Most likely will be the same as Ubuntu with XFCE when the "schedutil" governor i
 ================================================================
 
 Test:
-Idle for 4 hours with screen on and brightness set to 40%
+Idle for 4 hours with screen on and brightness set to 40%.
+Battery starts at any percentage.
 
 Completion date: 07/22/26
 
