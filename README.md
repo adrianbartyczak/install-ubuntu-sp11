@@ -2,6 +2,9 @@
 
 ![ubuntu-sp11](/ubuntu-sp11.jpg)
 
+If you prefer to install Arch Linux instead of Ubuntu, please see this section:
+- <https://github.com/adrianbartyczak/install-ubuntu-sp11#install-arch-linux-instead-of-ubuntu>
+
 ## 1. Get the ISO
 
 We will be installing the Ubuntu Snapdragon X Elite concept image from here:
@@ -257,6 +260,12 @@ desktop environment.
   Release file." To fix this, remove the "cdrom" file in /etc/apt/sources.list.d/.
 
 ## Other things
+
+### Install Arch Linux instead of Ubuntu
+
+If you prefer to install Arch Linux instead of Ubuntu, I have a set of install instructions based on Dale Winham's
+Arch Linux image here:
+- <https://github.com/dwhinham/archiso-aarch64-sp11/issues/16#issuecomment-4764101723>
 
 ### How to fix UEFI firmware in case it got broken by an image
 
